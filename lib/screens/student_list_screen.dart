@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import '../models/employee.dart';
+import '../models/student.dart';
 import '../services/firestore_service.dart';
-import 'employee_form_screen.dart';
+import 'student_form_screen.dart';
 
-class EmployeeListScreen extends StatelessWidget {
+class StudentListScreen extends StatelessWidget {
   final FirestoreService _firestoreService = FirestoreService();
 
-  EmployeeListScreen({super.key});
+  StudentListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Employee Management'),
+        title: const Text('Student Management'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: StreamBuilder<List<Employee>>(
-        stream: _firestoreService.getEmployees(),
+      body: StreamBuilder<List<Student>>(
+        stream: _firestoreService.getStudents(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(
@@ -30,12 +30,12 @@ class EmployeeListScreen extends StatelessWidget {
             );
           }
 
-          final employees = snapshot.data ?? [];
+          final students = snapshot.data ?? [];
 
-          if (employees.isEmpty) {
+          if (students.isEmpty) {
             return const Center(
               child: Text(
-                'No employees found.\nTap + to add a new employee.',
+                'No students found.\nTap + to add a new student.',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 16),
               ),
@@ -43,16 +43,16 @@ class EmployeeListScreen extends StatelessWidget {
           }
 
           return ListView.builder(
-            itemCount: employees.length,
+            itemCount: students.length,
             itemBuilder: (context, index) {
-              final employee = employees[index];
+              final student = students[index];
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 elevation: 2,
                 child: ListTile(
                   contentPadding: const EdgeInsets.all(16),
                   title: Text(
-                    employee.name,
+                    student.name,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
@@ -62,9 +62,9 @@ class EmployeeListScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 8),
-                      Text('Position: ${employee.position}'),
-                      Text('Status: ${employee.status}'),
-                      Text('Agency: ${employee.agency}'),
+                      Text('Course: ${student.course}'),
+                      Text('Year: ${student.year}'),
+                      Text('Section: ${student.section}'),
                     ],
                   ),
                   trailing: Row(
@@ -76,8 +76,8 @@ class EmployeeListScreen extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => EmployeeFormScreen(
-                                employee: employee,
+                              builder: (context) => StudentFormScreen(
+                                student: student,
                               ),
                             ),
                           );
@@ -86,7 +86,7 @@ class EmployeeListScreen extends StatelessWidget {
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
-                          _showDeleteDialog(context, employee);
+                          _showDeleteDialog(context, student);
                         },
                       ),
                     ],
@@ -102,7 +102,7 @@ class EmployeeListScreen extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const EmployeeFormScreen(),
+              builder: (context) => const StudentFormScreen(),
             ),
           );
         },
@@ -111,13 +111,13 @@ class EmployeeListScreen extends StatelessWidget {
     );
   }
 
-  void _showDeleteDialog(BuildContext context, Employee employee) {
+  void _showDeleteDialog(BuildContext context, Student student) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Employee'),
-          content: Text('Are you sure you want to delete ${employee.name}?'),
+          title: const Text('Delete Student'),
+          content: Text('Are you sure you want to delete ${student.name}?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -128,12 +128,12 @@ class EmployeeListScreen extends StatelessWidget {
             TextButton(
               onPressed: () async {
                 try {
-                  await _firestoreService.deleteEmployee(employee.id!);
+                  await _firestoreService.deleteStudent(student.id!);
                   if (context.mounted) {
                     Navigator.of(context).pop();
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Employee deleted successfully'),
+                        content: Text('Student deleted successfully'),
                         backgroundColor: Colors.green,
                       ),
                     );

@@ -1,78 +1,78 @@
 import 'package:flutter/material.dart';
-import '../models/employee.dart';
+import '../models/student.dart';
 import '../services/firestore_service.dart';
 
-class EmployeeFormScreen extends StatefulWidget {
-  final Employee? employee;
+class StudentFormScreen extends StatefulWidget {
+  final Student? student;
 
-  const EmployeeFormScreen({super.key, this.employee});
+  const StudentFormScreen({super.key, this.student});
 
   @override
-  State<EmployeeFormScreen> createState() => _EmployeeFormScreenState();
+  State<StudentFormScreen> createState() => _StudentFormScreenState();
 }
 
-class _EmployeeFormScreenState extends State<EmployeeFormScreen> {
+class _StudentFormScreenState extends State<StudentFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final FirestoreService _firestoreService = FirestoreService();
 
   late TextEditingController _nameController;
-  late TextEditingController _positionController;
-  late TextEditingController _statusController;
-  late TextEditingController _agencyController;
+  late TextEditingController _courseController;
+  late TextEditingController _yearController;
+  late TextEditingController _sectionController;
 
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.employee?.name ?? '');
-    _positionController = TextEditingController(text: widget.employee?.position ?? '');
-    _statusController = TextEditingController(text: widget.employee?.status ?? '');
-    _agencyController = TextEditingController(text: widget.employee?.agency ?? '');
+    _nameController = TextEditingController(text: widget.student?.name ?? '');
+    _courseController = TextEditingController(text: widget.student?.course ?? '');
+    _yearController = TextEditingController(text: widget.student?.year ?? '');
+    _sectionController = TextEditingController(text: widget.student?.section ?? '');
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _positionController.dispose();
-    _statusController.dispose();
-    _agencyController.dispose();
+    _courseController.dispose();
+    _yearController.dispose();
+    _sectionController.dispose();
     super.dispose();
   }
 
-  Future<void> _saveEmployee() async {
+  Future<void> _saveStudent() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
 
       try {
-        final employee = Employee(
-          id: widget.employee?.id,
+        final student = Student(
+          id: widget.student?.id,
           name: _nameController.text.trim(),
-          position: _positionController.text.trim(),
-          status: _statusController.text.trim(),
-          agency: _agencyController.text.trim(),
+          course: _courseController.text.trim(),
+          year: _yearController.text.trim(),
+          section: _sectionController.text.trim(),
         );
 
-        if (widget.employee == null) {
-          // Add new employee
-          await _firestoreService.addEmployee(employee);
+        if (widget.student == null) {
+          // Add new student
+          await _firestoreService.addStudent(student);
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Employee added successfully'),
+                content: Text('Student added successfully'),
                 backgroundColor: Colors.green,
               ),
             );
           }
         } else {
-          // Update existing employee
-          await _firestoreService.updateEmployee(widget.employee!.id!, employee);
+          // Update existing student
+          await _firestoreService.updateStudent(widget.student!.id!, student);
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Employee updated successfully'),
+                content: Text('Student updated successfully'),
                 backgroundColor: Colors.green,
               ),
             );
@@ -103,11 +103,11 @@ class _EmployeeFormScreenState extends State<EmployeeFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isEditing = widget.employee != null;
+    final isEditing = widget.student != null;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditing ? 'Edit Employee' : 'Add Employee'),
+        title: Text(isEditing ? 'Edit Student' : 'Add Student'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: SingleChildScrollView(
@@ -120,66 +120,68 @@ class _EmployeeFormScreenState extends State<EmployeeFormScreen> {
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(
-                  labelText: 'Employee Name',
+                  labelText: 'Student Name',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.person),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Please enter employee name';
+                    return 'Please enter student name';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
               TextFormField(
-                controller: _positionController,
+                controller: _courseController,
                 decoration: const InputDecoration(
-                  labelText: 'Position',
+                  labelText: 'Course',
                   border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.work),
+                  prefixIcon: Icon(Icons.school),
+                  hintText: 'e.g., Computer Science, Engineering',
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Please enter position';
+                    return 'Please enter course';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
               TextFormField(
-                controller: _statusController,
+                controller: _yearController,
                 decoration: const InputDecoration(
-                  labelText: 'Status',
+                  labelText: 'Year',
                   border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.info),
-                  hintText: 'e.g., Active, Inactive, On Leave',
+                  prefixIcon: Icon(Icons.calendar_today),
+                  hintText: 'e.g., 1st Year, 2nd Year, 3rd Year',
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Please enter status';
+                    return 'Please enter year';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
               TextFormField(
-                controller: _agencyController,
+                controller: _sectionController,
                 decoration: const InputDecoration(
-                  labelText: 'Agency',
+                  labelText: 'Section',
                   border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.business),
+                  prefixIcon: Icon(Icons.class_),
+                  hintText: 'e.g., A, B, C',
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Please enter agency';
+                    return 'Please enter section';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 24),
               ElevatedButton(
-                onPressed: _isLoading ? null : _saveEmployee,
+                onPressed: _isLoading ? null : _saveStudent,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   backgroundColor: Theme.of(context).colorScheme.primary,
@@ -195,7 +197,7 @@ class _EmployeeFormScreenState extends State<EmployeeFormScreen> {
                         ),
                       )
                     : Text(
-                        isEditing ? 'Update Employee' : 'Add Employee',
+                        isEditing ? 'Update Student' : 'Add Student',
                         style: const TextStyle(fontSize: 16),
                       ),
               ),
