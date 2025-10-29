@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "789589068396",
+    "project_id": "handsooon-6c2e6",
+    "storage_bucket": "handsooon-6c2e6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:789589068396:android:efde0c961cf1e675ffe649",
+        "android_client_info": {
+          "package_name": "com.example.hands_on"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHtpXRUTNF4V2wOMFeUxRbPrBBLRaEt5w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
